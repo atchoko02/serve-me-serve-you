@@ -147,7 +147,3 @@ Backend environment variables (create `backend/.env` from `backend/.env.example`
 
 - `PORT`: Server port (default: 5000)
 - `NODE_ENV`: Environment (development/production)
-
-## License
-
-Private - CS320 Final Project
