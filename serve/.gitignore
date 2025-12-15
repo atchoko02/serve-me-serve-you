@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+node_modules
+
+# Build outputs
+build/
+dist/
+
+# Environment
+.env
+.env.local
+./frontend/.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test results
+test-results/
+playwright-report/
+coverage/
+
+# Logs
+*.log
+npm-debug.log*
+
+# temp files
+USER_STORIES.md
+IMPLEMENTATION_REVIEW.md
+IMPLEMENTATION_PLAN.md
+MIGRATION.md
+FIREBASE_SETUP_GUIDE.md
+FIREBASE_SETUP_STEPS.md
+README_FIREBASE_SETUP.md
+setup-firebase.sh
+.env.example

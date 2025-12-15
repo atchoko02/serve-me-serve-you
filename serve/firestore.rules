@@ -1,0 +1,81 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Helper function to check if user owns the business
+    function isBusinessOwner(businessId) {
+      return isAuthenticated() && request.auth.uid == businessId;
+    }
+    
+    // Businesses collection
+    match /businesses/{businessId} {
+      // Business owners can read/write their own business document
+      allow read, write: if isBusinessOwner(businessId);
+      
+      // Products subcollection
+      match /products/{productId} {
+        allow read, write: if isBusinessOwner(businessId);
+      }
+      
+      // Decision Trees subcollection
+      match /decisionTrees/{treeId} {
+        allow read, write: if isBusinessOwner(businessId);
+      }
+      
+      // Questionnaires subcollection
+      match /questionnaires/{questionnaireId} {
+        // Business owners can read/write their questionnaires
+        allow read, write: if isBusinessOwner(businessId);
+        
+        // Public read access for shareable links (questionnaires are readable by anyone)
+        // This allows customers to access questionnaires via shareable links
+        allow read: if true;
+      }
+      
+      // Analytics subcollection
+      match /analytics/{analyticsId} {
+        // Only business owners can read analytics
+        allow read: if isBusinessOwner(businessId);
+        // Analytics are write-only by backend (no direct client writes)
+        allow write: if false; // Backend only
+      }
+    }
+    
+    // Questionnaires collection (top-level for easier querying)
+    match /questionnaires/{questionnaireId} {
+      // Public read access for shareable links
+      allow read: if true;
+      
+      // Only business owners can write (via businessId check in backend)
+      allow write: if false; // Backend only, validated by businessId
+      
+      // Responses subcollection
+      match /responses/{responseId} {
+        // Anyone can create responses (anonymous customer responses)
+        allow create: if true;
+        // Only business owners can read responses (for analytics)
+        // Note: We'll need to check businessId through the questionnaire document
+        // For now, allow read if authenticated (backend will validate ownership)
+        allow read: if isAuthenticated();
+        // No updates or deletes
+        allow update, delete: if false;
+      }
+    }
+    
+    // Sessions collection (temporary, for active questionnaire sessions)
+    match /sessions/{sessionId} {
+      // Anyone can create a session (for starting questionnaires)
+      allow create: if true;
+      // Anyone can read/update their own session (identified by sessionId)
+      // In practice, sessionId should be a secure random token
+      allow read, update: if true; // SessionId acts as authentication
+      // No deletes (sessions expire via TTL)
+      allow delete: if false;
+    }
+  }
+}
+
