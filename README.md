@@ -1,6 +1,6 @@
 # Serve Me Serve You
 
-A full-stack web application for small- and medium-sized businesses to generate automated product recommendation questionnaires for their customers.
+A full-stack web application for small and medium-sized businesses to generate automated product recommendation questionnaires for their customers.
 
 ## Project Structure
 
